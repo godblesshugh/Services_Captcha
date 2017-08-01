@@ -1,0 +1,15 @@
+hash: d9130a35abe59958fd298cb0109d4d1b488f82fdbb444b5da29250806dc561cb
+updated: 2017-08-01T16:03:59.188573783+08:00
+imports:
+- name: github.com/astaxie/beego
+  version: cab8458c1c4a5a3b4bf5192922be620e6dede15b
+  subpackages:
+  - config
+- name: github.com/dchest/captcha
+  version: 6a29415a8364ec2971fdc62d9e415ed53fc20410
+- name: github.com/garyburd/redigo
+  version: 9e66b83d15a259978be267d0b61838c42c3904e3
+  subpackages:
+  - internal
+  - redis
+testImports: []

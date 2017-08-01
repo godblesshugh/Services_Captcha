@@ -1,0 +1,6 @@
+package: MicroServices/captcha
+import:
+- package: github.com/dchest/captcha
+- package: github.com/astaxie/beego
+  subpackages:
+  - config
