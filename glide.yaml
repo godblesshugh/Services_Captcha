@@ -4,3 +4,5 @@ import:
 - package: github.com/astaxie/beego
   subpackages:
   - config
+- package: github.com/gorilla/mux
+  version: ~1.4.0

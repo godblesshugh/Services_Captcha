@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"github.com/astaxie/beego/config"
 	"github.com/dchest/captcha"
 	"github.com/garyburd/redigo/redis"
+	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"net/http"
@@ -16,13 +18,34 @@ func newCaptchaHandle(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, captcha.New())
 }
 
-func processFormHandler(w http.ResponseWriter, r *http.Request) {
+func checkHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; chaset=utf-8")
-	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
+	r.ParseForm()
+	if len(r.Form["captchaId"]) <= 0 {
+		io.WriteString(w, "0")
+		return
+	}
+	if len(r.Form["captchaSolution"]) <= 0 {
+		io.WriteString(w, "0")
+		return
+	}
+	if !captcha.VerifyString(r.Form["captchaId"][0], r.Form["captchaSolution"][0]) {
 		io.WriteString(w, "0")
 	} else {
 		io.WriteString(w, "1")
 	}
+}
+
+func imageHandle(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	captchaId := vars["id"]
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+	w.Header().Set("Content-Type", "image/png")
+	var content bytes.Buffer
+	captcha.WriteImage(&content, captchaId, 246, 80)
+	http.ServeContent(w, r, captchaId, time.Time{}, bytes.NewReader(content.Bytes()))
 }
 
 type RedisStore struct {
@@ -83,9 +106,12 @@ func main() {
 	}
 	captcha.SetCustomStore(redisStore)
 	captcha.New() // 测试一下输出，保证没有出问题
-	http.HandleFunc("/new", newCaptchaHandle)
-	http.HandleFunc("/process", processFormHandler)
-	http.Handle("/captcha/", captcha.Server(246, 80))
+
+	r := mux.NewRouter()
+	r.HandleFunc("/new", newCaptchaHandle)
+	r.HandleFunc("/check", checkHandler)
+	r.HandleFunc("/image/{id}", imageHandle)
+	http.Handle("/", r)
 	log.Println("captcha service on port: " + initConf.String("httpport"))
 	if err := http.ListenAndServe("localhost:"+initConf.String("httpport"), nil); err != nil {
 		log.Fatal(err)

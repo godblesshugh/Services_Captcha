@@ -1,5 +1,5 @@
-hash: d9130a35abe59958fd298cb0109d4d1b488f82fdbb444b5da29250806dc561cb
-updated: 2017-08-01T16:03:59.188573783+08:00
+hash: 3ea7ec2d1dbf26bf28d98e583f161a818a7768d9a55a7ac08d4b80bb155597d4
+updated: 2017-08-02T17:30:04.249892044+08:00
 imports:
 - name: github.com/astaxie/beego
   version: cab8458c1c4a5a3b4bf5192922be620e6dede15b
@@ -12,4 +12,8 @@ imports:
   subpackages:
   - internal
   - redis
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: bcd8bc72b08df0f70df986b97f95590779502d31
 testImports: []
