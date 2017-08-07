@@ -30,7 +30,7 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !captcha.VerifyString(r.Form["captchaId"][0], r.Form["captchaSolution"][0]) {
-		io.WriteString(w, "0")
+		io.WriteString(w, captcha.New())
 	} else {
 		io.WriteString(w, "1")
 	}
