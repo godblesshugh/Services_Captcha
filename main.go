@@ -44,7 +44,15 @@ func imageHandle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Expires", "0")
 	w.Header().Set("Content-Type", "image/png")
 	var content bytes.Buffer
-	captcha.WriteImage(&content, captchaId, 246, 80)
+	imgWidth, err := initConf.Int("imgWidth")
+	if err != nil {
+		imgWidth = 246
+	}
+	imgHeight, err := initConf.Int("imgHeight")
+	if err != nil {
+		imgHeight = 80
+	}
+	captcha.WriteImage(&content, captchaId, imgWidth, imgHeight)
 	http.ServeContent(w, r, captchaId, time.Time{}, bytes.NewReader(content.Bytes()))
 }
 
