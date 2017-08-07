@@ -14,19 +14,44 @@ import (
 
 var initConf config.Configer
 
+/**
+ * @api {Get} new get a new captcha Id
+ * @apiName new
+ * @apiGroup main
+ *
+ * @apiSuccess {String} return captchaId
+ *
+ * @apiSuccessExample {String} Success-Response:
+ JP3xLZ6WHG2FBCLJIel4
+ */
 func newCaptchaHandle(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, captcha.New())
 }
 
+/**
+ * @api {Get} check verify the captcha solution
+ * @apiName check
+ * @apiGroup main
+ *
+ * @apiParam {String} captchaId captchaId
+ * @apiParam {String} captchaSolution captchaSolution
+ *
+ * @apiSuccess {String} return
+ *
+ * @apiSuccessExample {String} Success-Response:
+ 1
+ * @apiErrorExample {String} Error-Response(new captchaId):
+ JP3xLZ6WHG2FBCLJIel4
+ */
 func checkHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; chaset=utf-8")
 	r.ParseForm()
 	if len(r.Form["captchaId"]) <= 0 {
-		io.WriteString(w, "0")
+		io.WriteString(w, captcha.New())
 		return
 	}
 	if len(r.Form["captchaSolution"]) <= 0 {
-		io.WriteString(w, "0")
+		io.WriteString(w, captcha.New())
 		return
 	}
 	if !captcha.VerifyString(r.Form["captchaId"][0], r.Form["captchaSolution"][0]) {
@@ -36,6 +61,14 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/**
+ * @api {Get} image/{id} get image for captchaId
+ * @apiName image/{id}
+ * @apiGroup main
+ *
+ * @apiSuccess {Object} image/png
+ *
+ */
 func imageHandle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	captchaId := vars["id"]
