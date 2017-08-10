@@ -113,7 +113,11 @@ func (s *RedisStore) Get(id string, clear bool) (digits []byte) {
 	if err != nil {
 		return []byte("")
 	}
-	return redisValue.([]byte)
+	if value, ok := redisValue.([]byte); !ok {
+		return []byte{}
+	} else {
+		return value
+	}
 }
 
 func main() {
